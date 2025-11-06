@@ -803,7 +803,8 @@ class ModelPT(LightningModule, Model):
                         optimizer_config = {}
                     optimizer_config.update(optimizer_args)
 
-                    optimizer_instance = hydra.utils.instantiate(
+                    from nemo.core.classes.common import safe_instantiate
+                    optimizer_instance = safe_instantiate(
                         optimizer_cls, self._optimizer_param_groups, **optimizer_config
                     )  # type: DictConfig
 

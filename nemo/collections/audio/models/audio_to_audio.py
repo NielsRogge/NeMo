@@ -117,8 +117,9 @@ class AudioToAudioModel(ModelPT, ABC):
                 cfg_dict = OmegaConf.to_container(cfg)
                 cfg_channel = cfg_dict.pop('channel', None)
                 cfg_batch_averaging = cfg_dict.pop('metric_using_batch_averaging', None)
+                from nemo.core.classes.common import safe_instantiate
                 metrics_dataloader_idx[name] = AudioMetricWrapper(
-                    metric=hydra.utils.instantiate(cfg_dict),
+                    metric=safe_instantiate(cfg_dict),
                     channel=cfg_channel,
                     metric_using_batch_averaging=cfg_batch_averaging,
                 )

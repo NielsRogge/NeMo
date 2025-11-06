@@ -390,7 +390,8 @@ class ScoreBasedGenerativeAudioToAudioModel(AudioToAudioModel):
         if 'score_estimator' in self._cfg.sampler:
             raise ValueError('Score estimator should be defined in the model config, not in the sampler config')
 
-        self.sampler = hydra.utils.instantiate(self._cfg.sampler, sde=self.sde, score_estimator=self.estimator)
+        from nemo.core.classes.common import safe_instantiate
+        self.sampler = safe_instantiate(self._cfg.sampler, sde=self.sde, score_estimator=self.estimator)
 
         # Normalization
         self.normalize_input = self._cfg.get('normalize_input', False)
@@ -649,7 +650,8 @@ class FlowMatchingAudioToAudioModel(AudioToAudioModel):
         self.flow = self.from_config_dict(self._cfg.flow)
 
         # Sampler
-        self.sampler = hydra.utils.instantiate(self._cfg.sampler, estimator=self.estimator, flow=self.flow)
+        from nemo.core.classes.common import safe_instantiate
+        self.sampler = safe_instantiate(self._cfg.sampler, estimator=self.estimator, flow=self.flow)
 
         # probability that the conditional input will be feed into the
         # estimator in the training stage
@@ -975,7 +977,8 @@ class SchroedingerBridgeAudioToAudioModel(AudioToAudioModel):
         self.noise_schedule = self.from_config_dict(self._cfg.noise_schedule)
 
         # Sampler
-        self.sampler = hydra.utils.instantiate(
+        from nemo.core.classes.common import safe_instantiate
+        self.sampler = safe_instantiate(
             self._cfg.sampler,
             noise_schedule=self.noise_schedule,
             estimator=self.estimator,

@@ -112,8 +112,9 @@ def parse_optimizer_args(
     if hasattr(optimizer_kwargs, 'keys'):
         # Attempt class path resolution
         if '_target_' in optimizer_kwargs:  # captures (target, _target_)
+            from nemo.core.classes.common import safe_instantiate
             optimizer_kwargs_config = OmegaConf.create(optimizer_kwargs)
-            optimizer_instance = hydra.utils.instantiate(optimizer_kwargs_config)  # type: DictConfig
+            optimizer_instance = safe_instantiate(optimizer_kwargs_config)  # type: DictConfig
             optimizer_instance = vars(optimizer_instance)
             return optimizer_instance
 

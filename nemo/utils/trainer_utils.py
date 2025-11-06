@@ -23,10 +23,12 @@ _HAS_HYDRA = True
 try:
     import hydra
     from omegaconf import DictConfig, OmegaConf
+    from nemo.core.classes.common import safe_instantiate
 except ModuleNotFoundError:
     DictConfig = Mapping
     OmegaConf = None
     _HAS_HYDRA = False
+    safe_instantiate = None
 
 
 def resolve_trainer_cfg(trainer_cfg: DictConfig) -> DictConfig:
@@ -56,13 +58,13 @@ def resolve_trainer_cfg(trainer_cfg: DictConfig) -> DictConfig:
 
     # Allows customizable strategies (eg ModelParallelStrategy) in YAML configs.
     if (strategy := trainer_cfg.get("strategy", None)) is not None and isinstance(strategy, Mapping):
-        trainer_cfg["strategy"] = hydra.utils.instantiate(strategy)
+        trainer_cfg["strategy"] = safe_instantiate(strategy)
 
     # Allows to add custom callbacks (e.g. NsysCallback) from YAML config.
     if (cbs := trainer_cfg.get("callbacks", None)) is not None and isinstance(cbs, Sequence):
         resolved = []
         for cb in cbs:
-            resolved.append(hydra.utils.instantiate(cb))
+            resolved.append(safe_instantiate(cb))
         trainer_cfg["callbacks"] = resolved
 
     return trainer_cfg

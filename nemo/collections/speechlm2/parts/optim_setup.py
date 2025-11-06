@@ -18,6 +18,7 @@ import hydra
 import torch
 from lightning import LightningModule
 
+from nemo.core.classes.common import safe_instantiate
 from nemo.utils import logging
 
 
@@ -56,10 +57,10 @@ def configure_optimizers(model: LightningModule):
         exclude_patterns=model.cfg.get("freeze_params", []),
         keep_patterns=model.cfg.get("prevent_freeze_params", []),
     )
-    optimizer = hydra.utils.instantiate(model.cfg.optimizer, parameters, _convert_='all')
+    optimizer = safe_instantiate(model.cfg.optimizer, parameters, _convert_='all')
     ans = {"optimizer": optimizer}
     if "lr_scheduler" in model.cfg:
-        lr_scheduler = hydra.utils.instantiate(model.cfg.lr_scheduler, optimizer)
+        lr_scheduler = safe_instantiate(model.cfg.lr_scheduler, optimizer)
         ans["lr_scheduler"] = {"scheduler": lr_scheduler, "interval": "step", "frequency": 1}
     return ans
 

@@ -846,8 +846,9 @@ def prepare_lr_scheduler(
 
     # Try instantiation of scheduler params from config class path
     if '_target_' in scheduler_args:
+        from nemo.core.classes.common import safe_instantiate
         scheduler_args_cfg = OmegaConf.create(scheduler_args)
-        scheduler_conf = hydra.utils.instantiate(scheduler_args_cfg)
+        scheduler_conf = safe_instantiate(scheduler_args_cfg)
         scheduler_args = vars(scheduler_conf)
 
         # Get name of the scheduler
